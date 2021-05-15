@@ -11,5 +11,6 @@ import { UsersController } from './controllers/users/users.controller';
   ],
   providers: [UsersRepository, usersServiceFactoryProvider],
   controllers: [UsersController],
+  exports: [usersServiceFactoryProvider],
 })
 export class UsersModule {}

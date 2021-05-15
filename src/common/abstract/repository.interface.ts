@@ -1,6 +1,8 @@
-export type ConditionsClause<T> = {
-  [K in keyof T]: T[K];
-};
+export type ConditionsClause<T> = Partial<
+  {
+    [K in keyof T]: T[K];
+  }
+>;
 
 export interface IRepository<T> {
   findById(id: string): Promise<T | null>;
