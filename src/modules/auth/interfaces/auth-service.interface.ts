@@ -5,5 +5,5 @@ export interface IAuthService {
     clientEphemeralPublic: string,
     clientProof: string,
     userEmail: string,
-  ): Promise<{ proof: string }>;
+  ): Promise<{ proof: string; accessToken: string }>;
 }

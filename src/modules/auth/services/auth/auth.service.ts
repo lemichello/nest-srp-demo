@@ -3,11 +3,13 @@ import { IUsersService } from '../../../users/interfaces/users-service.interface
 import { ErrorMessages } from '../../../../common/error-messages.constants';
 import { ISrpService } from '../../interfaces/srp-service.interface';
 import { Cache } from 'cache-manager';
+import { IJwtService } from '../../interfaces/jwt-service.interface';
 
 export class AuthService implements IAuthService {
   constructor(
     private readonly usersService: IUsersService,
     private readonly srpService: ISrpService,
+    private readonly jwtService: IJwtService,
     private readonly cacheManager: Cache,
   ) {}
 
@@ -33,7 +35,7 @@ export class AuthService implements IAuthService {
     clientEphemeralPublic: string,
     clientProof: string,
     userEmail: string,
-  ): Promise<{ proof: string }> {
+  ): Promise<{ proof: string; accessToken: string }> {
     const user = await this.usersService.findOne({ email: userEmail });
 
     if (!user) {
@@ -57,8 +59,11 @@ export class AuthService implements IAuthService {
         secretEphemeral: ephemeralSecretKey,
         clientPublicEphemeral: clientEphemeralPublic,
       });
+      const accessToken = this.jwtService.generateAccessToken({
+        sub: user._id.toHexString(),
+      });
 
-      return { proof: session.proof };
+      return { proof: session.proof, accessToken };
     } catch (e) {
       throw new Error(ErrorMessages.INVALID_SESSION_PROOF.msg);
     }
