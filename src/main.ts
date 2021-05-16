@@ -13,6 +13,7 @@ async function bootstrap() {
 }
 
 function setupBaseConfiguration(app: INestApplication) {
+  app.enableCors();
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new ErrorExceptionFilter());
   app.useGlobalPipes(
