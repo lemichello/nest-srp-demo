@@ -1,10 +1,13 @@
 import { IAuthService } from '../../interfaces/auth-service.interface';
 import { IUsersService } from '../../../users/interfaces/users-service.interface';
 import { ErrorMessages } from '../../../../common/error-messages.constants';
-import * as srp from 'secure-remote-password/server';
+import { ISrpService } from '../../interfaces/srp-service.interface';
 
 export class AuthService implements IAuthService {
-  constructor(private readonly usersService: IUsersService) {}
+  constructor(
+    private readonly usersService: IUsersService,
+    private readonly srpService: ISrpService,
+  ) {}
 
   async challenge(userEmail: string): Promise<{ salt: string; B: string }> {
     const user = await this.usersService.findOne({ email: userEmail });
@@ -14,8 +17,8 @@ export class AuthService implements IAuthService {
     }
 
     const { salt, verifier } = user;
-    const serverEphemeral = srp.generateEphemeral(verifier);
+    const ephemeralKeys = this.srpService.generateEphemeralKeys(verifier);
 
-    return { salt, B: serverEphemeral.public };
+    return { salt, B: ephemeralKeys.public };
   }
 }
