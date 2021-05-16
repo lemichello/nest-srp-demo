@@ -28,4 +28,39 @@ export class AuthService implements IAuthService {
 
     return { salt, B: ephemeralKeys.public };
   }
+
+  async authenticate(
+    clientEphemeralPublic: string,
+    clientProof: string,
+    userEmail: string,
+  ): Promise<{ proof: string }> {
+    const user = await this.usersService.findOne({ email: userEmail });
+
+    if (!user) {
+      throw new Error(ErrorMessages.NOT_FOUND_USER.msg);
+    }
+
+    const ephemeralSecretKey = await this.cacheManager.get<string>(
+      `srp:private-key#${user.email}`,
+    );
+
+    if (!ephemeralSecretKey) {
+      throw new Error(ErrorMessages.NOT_AUTHENTICATED.msg);
+    }
+
+    try {
+      const session = this.srpService.generateServerSession({
+        salt: user.salt,
+        username: userEmail,
+        verifier: user.verifier,
+        clientProof,
+        secretEphemeral: ephemeralSecretKey,
+        clientPublicEphemeral: clientEphemeralPublic,
+      });
+
+      return { proof: session.proof };
+    } catch (e) {
+      throw new Error(ErrorMessages.INVALID_SESSION_PROOF.msg);
+    }
+  }
 }
