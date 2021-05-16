@@ -3,9 +3,10 @@ import { authServiceFactoryProvider } from './providers/auth-service.provider';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './controllers/auth/auth.controller';
 import { srpServiceFactoryProvider } from './providers/srp-service.provider';
+import { RedisCacheModule } from '../redis-cache/redis-cache.module';
 
 @Module({
-  imports: [UsersModule],
+  imports: [RedisCacheModule, UsersModule],
   providers: [authServiceFactoryProvider, srpServiceFactoryProvider],
   controllers: [AuthController],
 })
