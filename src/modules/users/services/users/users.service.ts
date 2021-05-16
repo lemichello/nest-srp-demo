@@ -15,4 +15,8 @@ export class UsersService implements IUsersService {
   findOne(conditions: ConditionsClause<User>): Promise<User | null> {
     return this.usersRepository.findOne(conditions);
   }
+
+  getUserInfo(userId: string): Promise<User | null> {
+    return this.usersRepository.findById(userId);
+  }
 }

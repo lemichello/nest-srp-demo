@@ -5,4 +5,6 @@ export interface IUsersService {
   create(data: Partial<User>): Promise<User>;
 
   findOne(conditions: ConditionsClause<User>): Promise<User | null>;
+
+  getUserInfo(userId: string): Promise<User | null>;
 }

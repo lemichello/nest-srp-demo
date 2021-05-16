@@ -1,4 +1,9 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpException,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { ErrorMessages } from '../common/error-messages.constants';
 
@@ -17,6 +22,10 @@ export class ErrorExceptionFilter implements ExceptionFilter {
   }
 
   private static getResponseStatusBasedOnError(error: Error): number {
+    if (error instanceof HttpException) {
+      return error.getStatus();
+    }
+
     for (const [, value] of Object.entries(ErrorMessages)) {
       if (value.msg === error.message) {
         return value.status;

@@ -47,7 +47,7 @@ export class AuthService implements IAuthService {
     );
 
     if (!ephemeralSecretKey) {
-      throw new Error(ErrorMessages.NOT_AUTHENTICATED.msg);
+      throw new Error(ErrorMessages.UNAUTHORIZED.msg);
     }
 
     try {
