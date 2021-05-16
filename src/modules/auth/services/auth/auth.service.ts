@@ -63,6 +63,8 @@ export class AuthService implements IAuthService {
         sub: user._id.toHexString(),
       });
 
+      await this.cacheManager.del(`srp:private-key#${user.email}`);
+
       return { proof: session.proof, accessToken };
     } catch (e) {
       throw new Error(ErrorMessages.INVALID_SESSION_PROOF.msg);
